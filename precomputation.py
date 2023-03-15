@@ -106,8 +106,8 @@ class approxMergerTime(object):
             raise Exception("Looks like a table has already been computed")
 
         # Make sure we're being called reasonably
-        if not __name__ == '__main__':
-            raise Exception("Gotta spawn from a __main__ module")
+        #if not __name__ == '__main__':
+        #    raise Exception("Gotta spawn from a __main__ module")
 
         # Make a dataframe storing the cartesian product
         cartesian = pd.DataFrame(np.array([x for x in itertools.product(*self.individual_grids.values())]),
