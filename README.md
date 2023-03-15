@@ -22,11 +22,13 @@ Example usage of this object is provided in `demo.py`.
 
 ## Caveats and Todo
 
-The current code does not use `astropy`, but should.  It will be ported soon.
-The current code computes binary evolution via the modified Peters Equations assuming non-conformal time.
+- The current code does not use `astropy`, but should.  It will be ported soon.
+- The current code computes binary evolution via the modified Peters Equations assuming non-conformal time.
 This might not be correct, but can be easily adjusted and investigated.
 
 ## References
 
-
+If you find this package useful, please feel free to cite the following papers in your work:
+- [Derivation using adiabatic invariants, Section 3](https://iopscience.iop.org/article/10.3847/1538-4357/ab5aff#apjab5affs3)
+- [First real detector-selected population study](https://iopscience.iop.org/article/10.3847/2041-8213/ac2fad)
 
