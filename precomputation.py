@@ -124,8 +124,9 @@ class approxMergerTime(object):
         cartesian['q'] = cartesian['M2'] / cartesian['M']
 
         # So drop illegal q
-        cartesian = cartesian[cartesian['q'] <= 1]
-
+        # cartesian = cartesian[cartesian['q'] <= 1]
+        cartesian.drop(index=cartesian[cartesian['q'] > 1].index, inplace=True)
+        
         # Explicitly set the coupling strength
         cartesian['k'] = self.k
 
