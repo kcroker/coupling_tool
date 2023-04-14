@@ -82,7 +82,8 @@ def H(a):
     return (OmegaM/a**3 + OmegaL)**0.5
 
 def lookback_integrand(a):
-    return 1./(a*H(a))
+    # Naively shift this to conformal time...
+    return 1./(a*a*H(a))
 
 # Use quad() [ like astropy, hehe ] because cumtrapz() has been cancelled
 # (its cumulative error was 10%, or 1Gyr anyway, so it was dumb to use anyway)
@@ -120,7 +121,42 @@ class EarlyTermException(Exception):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        
+
+# We can get an approximate scale factor of when gwave emission will dominate coupling
+# adiabatic decay by evaluating Peters' dRda at R(a) given by the adiabatic decay approximation,
+# taking a ratio, and subtracting from 1.
+#
+# In the adiabatic regime, e remains conserved.
+
+def approx_transition_scale(a,
+                            M_i3,
+                            q_times_one_plus_q,
+                            one_plus_q_over_q2,
+                            k,
+                            a_i,
+                            q,
+                            icvec):
+
+    # Get the current adiabatic approximate R (in the coupling-dominated regime)
+    R = icvec['R']*(a/a_i)**(-3*k)
+
+    # Get the adiabatic loss at the current approximate R
+    dRda_adiabatic = -3*k*R/a
+
+    # Precompute shifted mass, e**2 and 1-e**2
+    shifted_mass_cubed = M_i3 * (a/a_i)**(3*k)
+    e2 = e**2
+    one_minus_e2 = 1 - e2
+
+    # Get the Peter's gwave loss
+    dRda_peters = -64./5 * G3_over_c5_ASTRON * shifted_mass_cubed * q_times_one_plus_q * (1 + 73./24*e2 + 37./96*e2**2) / (R**3 * one_minus_e2**3.5)*lookback_integrand(a)
+    
+    # Zero is where the equivalence occurs
+    equivalence = dRda_adiabatic/dRda_peters - 1
+
+# Now we have another bypass condition.
+# If approx_transition_scale(1, ...) > 0, then it definitely will not observably merge.
+
 # We have the default time and state, and then we expect additional arguments
 def c3o_binary_a(a,
                  state,
@@ -158,6 +194,8 @@ def c3o_binary_a(a,
 
     # Recip Hubble
     recipHa = lookback_integrand(a)
+
+    # For some bookkeeping
     
     # Except out when we try to compute something bad
     with np.errstate(all='raise'):
@@ -251,9 +289,23 @@ def ejection(a,
 
     return 1. - state[1]
 
+# Terminate if we stop being an ellipse
+def notellipse(a,
+               state,
+               M_i3,
+               q_times_one_plus_q,
+               one_plus_q_over_q2,
+               k,
+               a_i,
+               q,
+               icvec):
+
+    return state[0] or state[1]
+
 # Terminate in all these situations
 merger.terminal = True
 ejection.terminal = True
+notellipse.terminal = True
 
 #
 # Wrapper on solve_ivp() that computes the initial conditions.
@@ -296,7 +348,7 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
             # return tmp
 
     # Fancy trouble detection
-    events = [merger, ejection]
+    events = [merger, ejection, notellipse]
     
     while True:
         with np.errstate(all='raise'):
@@ -336,6 +388,7 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
                                  frame,
                                  frame,
                                  flavor="errstate failed again outside solve_ivp().  dying.")
+                    
                     exit(4)
                 
                 # Kill fancy event detection one by one
@@ -358,6 +411,10 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
             if len(orbit.t_events[1]):
                 return orbit.t_events[1][0]
 
+            # Spiraled all the way in on this hop?
+            if len(orbit.t_events[2]):
+                return orbit.t_events[2][0]
+            
             # Terminated but missed the merger?
             return orbit.t[-1]
         else:
