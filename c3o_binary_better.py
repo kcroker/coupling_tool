@@ -1,4 +1,5 @@
 from scipy.integrate import solve_ivp, cumtrapz, quad
+from scipy.optimize import brentq
 import argparse
 import numpy as np
 import sys
@@ -128,35 +129,55 @@ class EarlyTermException(Exception):
 #
 # In the adiabatic regime, e remains conserved.
 
-def approx_transition_scale(a,
-                            M_i3,
-                            q_times_one_plus_q,
-                            one_plus_q_over_q2,
-                            k,
-                            a_i,
-                            q,
-                            icvec):
+# Return precomputed quantities for a given frame that never change on
+# an orbit
+def precompute(frame):
+    return frame['M']**3, frame['q']*(1.+frame['q']), (1.+frame['q'])/frame['q']**2
 
+# This looks vectorized
+def approx_regime(a,
+                  icvec):
+
+    e = icvec['e']
+    a_i = icvec['a_DCO']
+    k = icvec['k']
+    
+    M_i3, q_times_one_plus_q, one_plus_q_over_q2 = precompute(icvec)
+                           
     # Get the current adiabatic approximate R (in the coupling-dominated regime)
-    R = icvec['R']*(a/a_i)**(-3*k)
+    blueshift = (a/a_i)**(3*k)
+    R = icvec['R']/blueshift
 
     # Get the adiabatic loss at the current approximate R
-    dRda_adiabatic = -3*k*R/a
+    # Do the single division here
+    mag_dRda_adiabatic = (3*k*R)/a
 
     # Precompute shifted mass, e**2 and 1-e**2
-    shifted_mass_cubed = M_i3 * (a/a_i)**(3*k)
+    shifted_mass_cubed = M_i3 * blueshift
     e2 = e**2
-    one_minus_e2 = 1 - e2
+    one_minus_e2 = 1. - e2
 
     # Get the Peter's gwave loss
-    dRda_peters = -64./5 * G3_over_c5_ASTRON * shifted_mass_cubed * q_times_one_plus_q * (1 + 73./24*e2 + 37./96*e2**2) / (R**3 * one_minus_e2**3.5)*lookback_integrand(a)
+    mag_dRda_peters = 64./5 * G3_over_c5_ASTRON * shifted_mass_cubed * q_times_one_plus_q * (1 + 73./24*e2 + 37./96*e2**2) / (R**3 * one_minus_e2**3.5)*lookback_integrand(a)
+
+    # When evaluated at a, gives:
+    #  ~ 0 : transition regime 
+    #  < 0 : coupling regime
+    #  > 0 : gwave regime
+    # We don't care about loss of precision here
+    return mag_dRda_peters - mag_dRda_adiabatic
+
+# Not vectorized.  For reasons.
+def find_approx_transition(icvec):
+    # See if it never mergers
+    start = approx_regime(icvec['a_DCO'], icvec)
+    end = approx_regime(1, icvec)
+
+    if (start < 0) and (end > 0):
+        return brentq(approx_regime, icvec['a_DCO'], 1, args=(icvec,))
+    else:
+        return np.nan
     
-    # Zero is where the equivalence occurs
-    equivalence = dRda_adiabatic/dRda_peters - 1
-
-# Now we have another bypass condition.
-# If approx_transition_scale(1, ...) > 0, then it definitely will not observably merge.
-
 # We have the default time and state, and then we expect additional arguments
 def c3o_binary_a(a,
                  state,
@@ -363,9 +384,7 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
                                   # --> Initial conditions
                                   events=events,
                                   # --> Integration termination conditions
-                                  args=[M**3,
-                                        q*(1.+q),
-                                        (1.+q)/q**2,
+                                  args=[*precompute(frame),
                                         k,
                                         a,
                                         q,

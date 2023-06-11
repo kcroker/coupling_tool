@@ -53,17 +53,17 @@ else:
     
     derp = approxMergerTime({ 'k' : args.k,
                               'a_min' : 1/(1+25),
-                              'a_max' : 0.95,
-                              'M_min' : 2.7,
-                              'M_max' : 15,
+                              'a_max' : 0.99,
+                              'M_min' : 0.01,
+                              'M_max' : 20,
                               'R_min' : 1e-2,
                               'R_max' : 1e3,
                               'e_min' : 0,
                               'e_max' : 1. - 1e-2,
-                              'N_a' : 40,
+                              'N_a' : 10,
                               'N_M' : 10,
                               'N_R' : 10,
-                              'N_e' : 20,
+                              'N_e' : 10,
                               'order' : args.order,
                               'usefloats' : False})
 

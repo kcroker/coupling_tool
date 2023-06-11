@@ -34,8 +34,8 @@ class approxMergerTime(object):
 
         # Ranges
         self.ranges = np.array([[self.params['a_min'], self.params['a_max']],  # Position 0
-                                [self.params['M_min'], self.params['M_max']],  # Position 1 (primary mass)
-                                [self.params['M_min'], self.params['M_max']],  # Position 2 (secondard mass)
+                                np.log10([self.params['M_min'], self.params['M_max']]),  # Position 1 (primary mass)
+                                np.log10([self.params['M_min'], self.params['M_max']]),  # Position 2 (secondard mass)
                                 #[self.params['q_min'], self.params['q_max']],  # Position 2
                                 np.log10([self.params['R_min'], self.params['R_max']]),  # Position 3
                                 [self.params['e_min'], self.params['e_max']]]) # Position 4
@@ -51,9 +51,9 @@ class approxMergerTime(object):
                            self.params['N_e']], dtype=int)
 
         # Grids
-        self.individual_grids = { col : (np.logspace if col == 'R' else np.linspace)(x[0], x[1], N) for x,col,N in zip(self.ranges,
-                                                                                                                       self.column_names,
-                                                                                                                       self.N)}
+        self.individual_grids = { col : (np.logspace if col in ['R', 'M', 'M2'] else np.linspace)(x[0], x[1], N) for x,col,N in zip(self.ranges,
+                                                                                                                                    self.column_names,
+                                                                                                                                    self.N)}
         
         # These map the requested values into gridspace
         # after subtracting off the low end
@@ -96,6 +96,8 @@ class approxMergerTime(object):
 
     # Print out the expected table size
     def getTableByteSize(self):
+        # KC 6/11/23
+        # XXX For some reason, this size estimate is completely wrong...
         return np.prod(self.N)*(4 if isinstance(self.dtype, np.float32) else 8)
 
     # Population the interpolation table (the slow step)
@@ -196,7 +198,7 @@ class approxMergerTime(object):
             # It also wants columns, hence the transpose
 
             # 5 rows and 10 columns, so transpose to get 10 rows and 5 columns
-            queries = np.asarray([a, M, M2, np.log10(R), e]).T
+            queries = np.asarray([a, np.log10(M), np.log10(M2), np.log10(R), e]).T
             xlations = self.ranges[:,0]
 
             coords = np.atleast_2d(self.scalings*(queries - xlations)).T
@@ -223,7 +225,7 @@ class approxMergerTime(object):
             raise Exception("Gotta spawn from a __main__ module")
             
         # Make test distributions
-        coords = pd.DataFrame(np.array([(loguniform(10**x[0], 10**x[1]) if col == 'R' else uniform(loc=x[0], scale=(x[1] - x[0]))).rvs(size=N) for x,col in zip(self.ranges, self.column_names)]).T,
+        coords = pd.DataFrame(np.array([(loguniform(10**x[0], 10**x[1]) if col in ['R', 'M', 'M2'] else uniform(loc=x[0], scale=(x[1] - x[0]))).rvs(size=N) for x,col in zip(self.ranges, self.column_names)]).T,
                               columns=self.column_names)
 
         # Add in the coupling
