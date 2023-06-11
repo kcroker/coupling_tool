@@ -221,8 +221,8 @@ class approxMergerTime(object):
     # and plot some precision statistics
     def validate(self, N, Nkids=1):
 
-        if not __name__ == '__main__':
-            raise Exception("Gotta spawn from a __main__ module")
+        #if not __name__ == '__main__':
+        #    raise Exception("Gotta spawn from a __main__ module")
             
         # Make test distributions
         coords = pd.DataFrame(np.array([(loguniform(10**x[0], 10**x[1]) if col in ['R', 'M', 'M2'] else uniform(loc=x[0], scale=(x[1] - x[0]))).rvs(size=N) for x,col in zip(self.ranges, self.column_names)]).T,
@@ -265,9 +265,6 @@ class approxMergerTime(object):
 
         # Remove k
         del coords['k']
-
-        # Remove q
-        del coords['q']
         
         # Make data for all orders
         for order in range(1, self.maxorder+1):
@@ -282,7 +279,11 @@ class approxMergerTime(object):
                                                            columns=['a_f'],
                                                            index=coords.index)
 
-        # Return the results
+        # Concatenate the columns, order should be correct ;)
+        # No idea how to do this quickly, Im sure its easy
+        for column in coords.columns:
+            results[column] = coords[column]
+            
         return results
             
 # # Testing stub

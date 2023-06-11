@@ -41,13 +41,72 @@ if os.path.exists(args.fname):
         derp.maxorder = min(5, min(derp.N))
 
     if not 'individual_grids' in dir(derp):
-        derp.individual_grids = { col : (np.logspace if col == 'R' else np.linspace)(x[0], x[1], N) for x,col,N in zip(derp.ranges,
-                                                                                                                       derp.column_names,
-                                                                                                                       derp.N)}
+        derp.individual_grids = { col : (np.logspace if col == ['R', 'M', 'M2'] else np.linspace)(x[0], x[1], N) for x,col,N in zip(derp.ranges,
+                                                                                                                                    derp.column_names,
+                                                                                                                                    derp.N)}
         
     # Set the requested order
     derp.set_order(args.order)
+
+    # Run validation
+    if os.path.exists('%s_validations.dat' % args.fname):
+        import pandas as pd
+        print("Found existing validation set for this table, using that instead of running new ones.")
+        results = pd.read_csv('%s_validations.dat' % args.fname)
+    else:
+        results = derp.validate(args.validate, Nkids=args.psize)
+
+        # Save the results
+        results.to_csv("%s_validations.dat" % args.fname)
+
+    # Visualize them
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import matplotlib
     
+    # My screen is too fancy
+    matplotlib.rcParams['figure.dpi'] = 300
+
+    # Compute some new things
+    results['q'] = results['M2']/results['M']
+    results['Mtot'] = results['M'] + results['M2']
+
+    print(results)
+    
+    results['frac_error'] = results['a_f_table_1']/results['a_f_direct'] - 1.
+    whatever, bins, _ = plt.hist(results['frac_error'], bins=20, alpha=0.5, label='direct')
+
+    plt.yscale('log')
+    plt.title('%s performance, random loguniform sampling' % args.fname)
+    plt.ylabel('Counts')
+    plt.xlabel('Fractional error in linear interpolation')
+    plt.show()
+
+    # Now show which systems show poor performance
+    badboiz = results[np.abs(results['frac_error']) > 0.01]
+
+    cols = ['a_DCO', 'q', 'Mtot', 'R', 'e']
+    logcols = ['q', 'R', 'Mtot']
+    fig, axs = plt.subplots(len(cols), 1)
+    fig.set_size_inches(10, 24)
+    
+    for ax,col in zip(axs, cols):
+
+        if col in logcols:
+            ax.set_xscale('log')
+            bins = np.logspace(np.log10(np.min(badboiz[col])),
+                               np.log10(np.max(badboiz[col])),
+                               20)
+        else:
+            bins = 20
+            
+        ax.hist(badboiz[col], bins=bins)
+        ax.set_yscale('log')
+        ax.set_xlabel(col)
+        ax.set_ylabel("Counts")
+        
+    plt.savefig("detailed_errors.pdf", dpi=300)
+        
 else:
     print("Producing table for coupling strength", args.k)
     
