@@ -43,18 +43,22 @@ See Croker & Weiner (2019), Section 3 on why working in conformal time may be mo
 I've not formed a strong opinion on this, and I probably won't reach one without a fully GR treatment of the coupled binary problem.
 Working in "cosmic" proper time can be achieved by modifying `c3o_binary_better.py` appropriately.
 Email me if you can't figure it out.
+- I will stop using pickles, because getting the `precomputation` file to load as a module/package is annoying and hacky.
 
 ## Citation
 
 If you find this package useful, please feel free to cite the following papers in your work:
-- [Derivation using adiabatic invariants, Section 3](https://iopscience.iop.org/article/10.3847/1538-4357/ab5aff#apjab5affs3)
-- [First real detector-selected population study](https://iopscience.iop.org/article/10.3847/2041-8213/ac2fad)
+- Tracking of radiative losses and adiabatic orbital decay simultaneously[^4]
+- First precisely LIGO detector-selected population study with COSMIC[^5]
 
 ## References
 
-[^1]: Rodriguez, C. L., “Constraints on the Cosmological Coupling of Black Holes from the Globular Cluster NGC 3201”, <i>The Astrophysical Journal</i>, vol. 947, no. 1, 2023. doi:10.3847/2041-8213/acc9b6.
+[^1]: Rodriguez, C. L., “Constraints on the Cosmological Coupling of Black Holes from the Globular Cluster NGC 3201”, <i>The Astrophysical Journal</i>, vol. 947, no. 1, 2023. [doi:10.3847/2041-8213/acc9b6](https://doi.org/10.3847/2041-8213/acc9b6).
 
-[^2]: Andrae, R. and El-Badry, K., “Constraints on the cosmological coupling of black holes from Gaia”, <i>Astronomy and Astrophysics</i>, vol. 673, 2023. doi:10.1051/0004-6361/202346350.
+[^2]: Andrae, R. and El-Badry, K., “Constraints on the cosmological coupling of black holes from Gaia”, <i>Astronomy and Astrophysics</i>, vol. 673, 2023. [doi:10.1051/0004-6361/202346350](https://doi.org/10.1051/0004-6361/202346350).
 
-[^3]: Miller-Jones, J. C. A., “Cygnus X-1 contains a 21-solar mass black hole—Implications for massive star winds”, <i>Science</i>, vol. 371, no. 6533, pp. 1046–1049, 2021. doi:10.1126/science.abb3363.
+[^3]: Miller-Jones, J. C. A., “Cygnus X-1 contains a 21-solar mass black hole—Implications for massive star winds”, <i>Science</i>, vol. 371, no. 6533, pp. 1046–1049, 2021. [doi:10.1126/science.abb3363](https://doi.org/10.1126/science.abb3363).
 
+[^4]: Croker, K. S., Nishimura, K. A., and Farrah, D., “Implications of Symmetry and Pressure in Friedmann Cosmology. II. Stellar Remnant Black Hole Mass Function”, <i>The Astrophysical Journal</i>, vol. 889, no. 2, 2020. [doi:10.3847/1538-4357/ab5aff](https://doi.org/10.3847/1538-4357/ab5aff).
+
+[^5]: Croker, K. S., Zevin, M., Farrah, D., Nishimura, K. A., and Tarlé, G., “Cosmologically Coupled Compact Objects: A Single-parameter Model for LIGO-Virgo Mass and Redshift Distributions”, <i>The Astrophysical Journal</i>, vol. 921, no. 2, 2021. [doi:10.3847/2041-8213/ac2fad](https://doi.org/10.3847/2041-8213/ac2fad).
