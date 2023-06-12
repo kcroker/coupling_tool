@@ -34,6 +34,8 @@ Fractional error in merger scale factor will be displayed as a histogram.
 Distributions for individual binary parameters of systems with fractional error performance worse than 1% will be saved
 to `detailed_errors.pdf`.
 
+For cases that show large fractional errors, you can add the `--bad` flag to a validation run and get a linear scale around +/- 10% fractional error. 
+
 ## Caveats and Todo
 
 - The tables can perform badly as *k* approaches 0.  For *k*=3, I have found very good performance with the current parameters in `make_table.py`, e.g. only 1% of systems have fractional error in merger scale factor greater than 1%, and all but 0.1% of systems have fractional error less than 5%.  The resulting table is ~4.2M and fits in L2 or L3 cache.
