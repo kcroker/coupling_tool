@@ -11,36 +11,78 @@ parser = argparse.ArgumentParser(description="Precompute merger redshift table o
 parser.add_argument("fname",
                     help="File to output or read in")
 
-parser.add_argument("--psize",
-                    help="How many children to spawn during computation",
-                    type=int,
-                    default=1)
+parser.add_argument("--R",
+                    help="Semi-major axis (AU) grid range, will be uniform in log space.  Third number is samples.",
+                    default="1e-2:1e3:10")
 
-parser.add_argument("--validate",
-                    help="Number of random validation pulls to examine",
-                    type=int,
-                    default=1000)
+parser.add_argument("--M",
+                    help="Mass (Msol) grid range, will be uniform in log space. Third number is samples",
+                    default="1e-1:20:10")
 
-parser.add_argument("--order",
-                    help="Order at which to use map_coordinates()",
-                    type=int,
-                    default=1)
+parser.add_argument("--e",
+                    help="Eccentricity grid range, will be uniform in log space.  Third number is samples",
+                    default="0:0.99:10")
+
+parser.add_argument("--z",
+                    help="Redshift grid range, will be converted to linear grid in scale factor.  Third number is samples",
+                    default="26:1e-2:10")
 
 parser.add_argument("--k",
                     help="The coupling strength",
                     type=float,
                     default=3)
 
+parser.add_argument("--validate",
+                    help="Number of random validation pulls to examine",
+                    type=int,
+                    default=1000)
+
 parser.add_argument("--bad",
                     help="Display fractional error ranges in logspace outside of 10%",
                     action='store_true')
 
+parser.add_argument("--psize",
+                    help="How many children to spawn during computation",
+                    type=int,
+                    default=1)
+
+parser.add_argument("--order",
+                    help="Order at which to use map_coordinates()",
+                    type=int,
+                    default=1)
+
+def parseParams(args):
+    derp = {}
+    for field in ['R', 'z', 'e', 'M']:
+        dakine = [float(x) if n < 2 else int(x) for n,x in enumerate(eval("args.%s" % field).split(':'))]
+
+        # Switch to scale factor if necessary
+        if field == 'z':
+            for i in range(2):
+                dakine[i] = 1./(1 + dakine[i])
+            field = 'a'
+            
+        # Add the dict entries
+        derp['%s_min' % field] = dakine[0]
+        derp['%s_max' % field] = dakine[1]
+        derp['N_%s' % field] = dakine[2]
+
+
+    # Add remaining parameterse
+    derp['order'] = args.order
+    derp['useFloats'] = False
+    derp['k'] = args.k
+    
+    return derp
+    
 args = parser.parse_args()
 
 if os.path.exists(args.fname):
     print("Found file, opening")
     derp = pickle.load(open(args.fname, 'rb'))
 
+    print(derp.ranges)
+    
     if not 'maxorder' in dir(derp):
         derp.maxorder = min(5, min(derp.N))
 
@@ -128,24 +170,11 @@ if os.path.exists(args.fname):
     plt.savefig("detailed_errors.pdf", dpi=300)
         
 else:
-    print("Producing table for coupling strength", args.k)
-    
-    derp = approxMergerTime({ 'k' : args.k,
-                              'a_min' : 1/(1+25),
-                              'a_max' : 0.99,
-                              'M_min' : 0.01,
-                              'M_max' : 20,
-                              'R_min' : 1e-2,
-                              'R_max' : 1e3,
-                              'e_min' : 0,
-                              'e_max' : 1. - 1e-2,
-                              'N_a' : 10,
-                              'N_M' : 10,
-                              'N_R' : 10,
-                              'N_e' : 10,
-                              'order' : args.order,
-                              'usefloats' : False})
+    params = parseParams(args)
+    print("Producing table with parameters", params)
 
+    derp = approxMergerTime(params)
+    
     # Eventual size of table (typical max L2 cache is 8MB)
     # Not sure how much speed will depend on the size of the
     # table itself though, as map_coordinates() needs to play

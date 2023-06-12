@@ -55,9 +55,9 @@ If you find this package useful, please feel free to cite the following papers i
 
 ## References
 
-[^1]: Rodriguez, C. L., “Constraints on the Cosmological Coupling of Black Holes from the Globular Cluster NGC 3201”, <i>The Astrophysical Journal</i>, vol. 947, no. 1, 2023. [doi:10.3847/2041-8213/acc9b6](https://doi.org/10.3847/2041-8213/acc9b6).
+[^1]: Rodriguez, C. L., “Constraints on the Cosmological Coupling of Black Holes from the Globular Cluster NGC 3201”, <i>The Astrophysical Journal Letters</i>, vol. 947, no. 1, 2023. [doi:10.3847/2041-8213/acc9b6](https://doi.org/10.3847/2041-8213/acc9b6).
 
-[^2]: Andrae, R. and El-Badry, K., “Constraints on the cosmological coupling of black holes from Gaia”, <i>Astronomy and Astrophysics</i>, vol. 673, 2023. [doi:10.1051/0004-6361/202346350](https://doi.org/10.1051/0004-6361/202346350).
+[^2]: Andrae, R. and El-Badry, K., “Constraints on the cosmological coupling of black holes from Gaia”, <i>Astronomy and Astrophysics Letters</i>, vol. 673, 2023. [doi:10.1051/0004-6361/202346350](https://doi.org/10.1051/0004-6361/202346350).
 
 [^3]: Miller-Jones, J. C. A., “Cygnus X-1 contains a 21-solar mass black hole—Implications for massive star winds”, <i>Science</i>, vol. 371, no. 6533, pp. 1046–1049, 2021. [doi:10.1126/science.abb3363](https://doi.org/10.1126/science.abb3363).
 
