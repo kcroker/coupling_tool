@@ -12,7 +12,10 @@ This package allows you to produce interpolation table python pickles that enabl
 
 ## Usage
 
-To make a basic table on 14 processors, with sub-percent precision at maximal coupling, across the range of typical COSMIC output remnant binaries:
+First, adjust the `approxMergerTime()` object instantiation to have the ranges and mesh refinement that you'd like.
+Default settings are appropriate for data-driven birth masses as found in Globular Clusters[^1], Gaia DR3[^2] and Cygnus-X1[^3] BHs.
+To produce a table across 14 processors in parallel, run
+
 > $ python3 make_table.py --psize 14 sample_table_k3.p
 
 The name of the table will be `sample_table_k3.p`.  This pickle can be loaded, and its `approxMergerTime()` method can then be called.
@@ -41,9 +44,17 @@ I've not formed a strong opinion on this, and I probably won't reach one without
 Working in "cosmic" proper time can be achieved by modifying `c3o_binary_better.py` appropriately.
 Email me if you can't figure it out.
 
-## References
+## Citation
 
 If you find this package useful, please feel free to cite the following papers in your work:
 - [Derivation using adiabatic invariants, Section 3](https://iopscience.iop.org/article/10.3847/1538-4357/ab5aff#apjab5affs3)
 - [First real detector-selected population study](https://iopscience.iop.org/article/10.3847/2041-8213/ac2fad)
+
+## References
+
+[^1]: Rodriguez, C. L., “Constraints on the Cosmological Coupling of Black Holes from the Globular Cluster NGC 3201”, <i>The Astrophysical Journal</i>, vol. 947, no. 1, 2023. doi:10.3847/2041-8213/acc9b6.
+
+[^2]: Andrae, R. and El-Badry, K., “Constraints on the cosmological coupling of black holes from Gaia”, <i>Astronomy and Astrophysics</i>, vol. 673, 2023. doi:10.1051/0004-6361/202346350.
+
+[^3]: Miller-Jones, J. C. A., “Cygnus X-1 contains a 21-solar mass black hole—Implications for massive star winds”, <i>Science</i>, vol. 371, no. 6533, pp. 1046–1049, 2021. doi:10.1126/science.abb3363.
 
