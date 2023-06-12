@@ -12,7 +12,7 @@ This package allows you to produce interpolation table python pickles that enabl
 
 ## Usage
 
-Default settings are appropriate for data-driven birth masses as found in Globular Clusters[^1], Gaia DR3[^2] and Cygnus-X1[^3] BHs.
+Default settings are appropriate for data-driven birth masses as found in Globular Clusters[^1], Gaia DR3[^2] and Cygnus-X1[^3] BHs when adopting _k_=3 coupling[^4].
 To produce a table across 14 processors in parallel, run
 
 > $ python3 make_table.py --psize 14 sample_table_k3.p
@@ -62,8 +62,8 @@ Email me if you can't figure it out.
 ## How to Cite
 
 If you find this package useful, please feel free to cite the following papers in your work:
-- Tracking of radiative losses and adiabatic orbital decay simultaneously[^4]
-- First precisely LIGO detector-selected population study with COSMIC[^5]
+- Tracking of radiative losses and adiabatic orbital decay simultaneously[^5]
+- First precisely LIGO detector-selected population study with COSMIC[^6]
 
 ## References
 
@@ -73,6 +73,8 @@ If you find this package useful, please feel free to cite the following papers i
 
 [^3]: Miller-Jones, J. C. A., “Cygnus X-1 contains a 21-solar mass black hole—Implications for massive star winds”, <i>Science</i>, vol. 371, no. 6533, pp. 1046–1049, 2021. [doi:10.1126/science.abb3363](https://doi.org/10.1126/science.abb3363).
 
-[^4]: Croker, K. S., Nishimura, K. A., and Farrah, D., “Implications of Symmetry and Pressure in Friedmann Cosmology. II. Stellar Remnant Black Hole Mass Function”, <i>The Astrophysical Journal</i>, vol. 889, no. 2, 2020. [doi:10.3847/1538-4357/ab5aff](https://doi.org/10.3847/1538-4357/ab5aff).
+[^4]: Farrah, D., et al., “Observational Evidence for Cosmological Coupling of Black Holes and its Implications for an Astrophysical Source of Dark Energy”, <i>The Astrophysical Journal Letters</i>, vol. 944, no. 2, 2023. [doi:10.3847/2041-8213/acb704](https://doi.org/10.3847/2041-8213/acb704).
 
-[^5]: Croker, K. S., Zevin, M., Farrah, D., Nishimura, K. A., and Tarlé, G., “Cosmologically Coupled Compact Objects: A Single-parameter Model for LIGO-Virgo Mass and Redshift Distributions”, <i>The Astrophysical Journal Letters</i>, vol. 921, no. 2, 2021. [doi:10.3847/2041-8213/ac2fad](https://doi.org/10.3847/2041-8213/ac2fad).
+[^5]: Croker, K. S., Nishimura, K. A., and Farrah, D., “Implications of Symmetry and Pressure in Friedmann Cosmology. II. Stellar Remnant Black Hole Mass Function”, <i>The Astrophysical Journal</i>, vol. 889, no. 2, 2020. [doi:10.3847/1538-4357/ab5aff](https://doi.org/10.3847/1538-4357/ab5aff).
+
+[^6]: Croker, K. S., Zevin, M., Farrah, D., Nishimura, K. A., and Tarlé, G., “Cosmologically Coupled Compact Objects: A Single-parameter Model for LIGO-Virgo Mass and Redshift Distributions”, <i>The Astrophysical Journal Letters</i>, vol. 921, no. 2, 2021. [doi:10.3847/2041-8213/ac2fad](https://doi.org/10.3847/2041-8213/ac2fad).
