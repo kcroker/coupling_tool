@@ -17,7 +17,7 @@ To produce a table across 14 processors in parallel, run
 
 > $ python3 make_table.py --psize 14 sample_table_k3.p
 
-The name of the table will be `sample_table_k3.p`.  This pickle can be loaded, and its `approxMergerTime()` method can then be called.
+The name of the table will be `sample_table_k3.p`.  This `approxMergerTime` object pickle can be loaded, and its `merger_a()` method can then be called.
 Example usage of this object is provided in `demo.py`.
 
 Generation of more specific tables can be done with command line flags.  For example, tables suitable for BBH populations produced by default configuration COSMIC runs, which assume a TOV limit lower bound on BH mass, and a coupling of _k_=0.5 consistent with this assumption:
