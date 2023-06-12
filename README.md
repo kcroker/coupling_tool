@@ -12,16 +12,23 @@ This package allows you to produce interpolation table python pickles that enabl
 
 ## Usage
 
-First, adjust the `approxMergerTime()` object instantiation to have the ranges and mesh refinement that you'd like.
 Default settings are appropriate for data-driven birth masses as found in Globular Clusters[^1], Gaia DR3[^2] and Cygnus-X1[^3] BHs.
 To produce a table across 14 processors in parallel, run
 
 > $ python3 make_table.py --psize 14 sample_table_k3.p
 
 The name of the table will be `sample_table_k3.p`.  This pickle can be loaded, and its `approxMergerTime()` method can then be called.
-This generator hardcodes the table ranges at present, but can easily be modified to pull these parameters from the command line, or hardcode them as you wish.
-
 Example usage of this object is provided in `demo.py`.
+
+Generation of more specific tables can be done with command line flags.  For example, tables suitable for BBH populations produced by default configuration COSMIC runs, which assume a TOV limit lower bound on BH mass, and a coupling of _k_=0.5 consistent with this assumption:
+
+> $ python3 make_table.py --psize 14 decoupled_cosmic.p --M 2.2:55:10 --R 0.01:1e3:10 --k 0.5
+
+The syntax is "lower bound:upper bound:mesh samples."
+The range for mass _M_ is applied for both primary and secondary masses, so mass ratio _q_ = 1 can be approximated at low and high ends.
+Semi-major axis and mass are meshed in logspace.
+Eccentricity and scale factor are meshed linearly, between the bounding redshifts specified with `--z`.
+For a full list of options, along with detailed values, use the `--help` flag.
 
 ## Validation
 
