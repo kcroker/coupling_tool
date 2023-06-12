@@ -36,9 +36,9 @@ to `detailed_errors.pdf`.
 
 ## Caveats and Todo
 
-- The tables can perform very badly as *k* approaches 0.  For *k*=3, I have found very good performance with the current parameters in `make_table.py`, e.g. only 1% of systems have fractional error in merger scale factor greater than 1%, and all by 0.1% of systems have fractional error less than 5%.  The resulting table is ~4.2M and fits in L2 or L3 cache.
+- The tables can perform very badly as *k* approaches 0.  For *k*=3, I have found very good performance with the current parameters in `make_table.py`, e.g. only 1% of systems have fractional error in merger scale factor greater than 1%, and all but 0.1% of systems have fractional error less than 5%.  The resulting table is ~4.2M and fits in L2 or L3 cache.
 - The current code does not use `astropy`, but should.  It will be ported soon.
-- The current code computes binary evolution via the modified Peters Equations assuming *conformal time*.
+- The current code computes binary evolution via the extended Peters Equations assuming *conformal time*.
 See Croker & Weiner (2019), Section 3 on why working in conformal time may be more appropriate for extending SR predictions across cosmological timescales.  (Contrast this to the usual intuition that one should work in proper (or "self") time, which would correspond to timelike arc for RW comoving observers.)
 I've not formed a strong opinion on this, and I probably won't reach one without a fully GR treatment of the coupled binary problem.
 Working in "cosmic" proper time can be achieved by modifying `c3o_binary_better.py` appropriately.
@@ -61,4 +61,4 @@ If you find this package useful, please feel free to cite the following papers i
 
 [^4]: Croker, K. S., Nishimura, K. A., and Farrah, D., “Implications of Symmetry and Pressure in Friedmann Cosmology. II. Stellar Remnant Black Hole Mass Function”, <i>The Astrophysical Journal</i>, vol. 889, no. 2, 2020. [doi:10.3847/1538-4357/ab5aff](https://doi.org/10.3847/1538-4357/ab5aff).
 
-[^5]: Croker, K. S., Zevin, M., Farrah, D., Nishimura, K. A., and Tarlé, G., “Cosmologically Coupled Compact Objects: A Single-parameter Model for LIGO-Virgo Mass and Redshift Distributions”, <i>The Astrophysical Journal</i>, vol. 921, no. 2, 2021. [doi:10.3847/2041-8213/ac2fad](https://doi.org/10.3847/2041-8213/ac2fad).
+[^5]: Croker, K. S., Zevin, M., Farrah, D., Nishimura, K. A., and Tarlé, G., “Cosmologically Coupled Compact Objects: A Single-parameter Model for LIGO-Virgo Mass and Redshift Distributions”, <i>The Astrophysical Journal Letters</i>, vol. 921, no. 2, 2021. [doi:10.3847/2041-8213/ac2fad](https://doi.org/10.3847/2041-8213/ac2fad).

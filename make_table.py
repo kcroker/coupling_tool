@@ -31,6 +31,10 @@ parser.add_argument("--k",
                     type=float,
                     default=3)
 
+parser.add_argument("--bad",
+                    help="Display fractional error ranges in logspace outside of 10%",
+                    action='store_true')
+
 args = parser.parse_args()
 
 if os.path.exists(args.fname):
@@ -74,7 +78,23 @@ if os.path.exists(args.fname):
     print(results)
     
     results['frac_error'] = results['a_f_table_1']/results['a_f_direct'] - 1.
-    whatever, bins, _ = plt.hist(results['frac_error'], bins=20, alpha=0.5, label='direct')
+
+    if args.bad:
+        hires_bins = np.linspace(-0.1, 0.1, 12)
+        low_bin = np.min(results['frac_error'])
+        high_bin = np.max(results['frac_error'])
+
+        bins = np.concatenate( (np.linspace(low_bin, hires_bins[0], 10),
+                                hires_bins[1:-1],
+                                np.linspace(hires_bins[-1], high_bin, 10)) )
+        
+        plt.xscale('symlog', linthresh=0.1)
+        plt.gca().axvline(-0.1, linestyle=':', linewidth=1, color='k')
+        plt.gca().axvline(0.1, linestyle=':', linewidth=1, color='k')
+    else:
+        bins = 40
+    
+    plt.hist(results['frac_error'], bins=bins, alpha=0.5)
 
     plt.yscale('log')
     plt.title('%s performance, random loguniform sampling' % args.fname)

@@ -263,8 +263,9 @@ class approxMergerTime(object):
         # Rename it
         results['a_f_direct'] = results['a_f']
 
-        # Remove k
+        # Remove k and q
         del coords['k']
+        del coords['q']
         
         # Make data for all orders
         for order in range(1, self.maxorder+1):
