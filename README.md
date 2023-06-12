@@ -22,13 +22,17 @@ Example usage of this object is provided in `demo.py`.
 
 Generation of more specific tables can be done with command line flags.  For example, tables suitable for BBH populations produced by default configuration COSMIC runs, which assume a TOV limit lower bound on BH mass, and a coupling of _k_=0.5 consistent with this assumption:
 
-> $ python3 make_table.py --psize 14 decoupled_cosmic.p --M 2.2:55:10 --R 0.01:1e3:10 --k 0.5
+> $ python3 make_table.py --psize 14 khalf_cosmic.p --M 2.2:55:10 --R 0.01:1e3:10 --k 0.5
 
 The syntax is "lower bound:upper bound:mesh samples."
 The range for mass _M_ is applied for both primary and secondary masses, so mass ratio _q_ = 1 can be approximated at low and high ends.
 Semi-major axis and mass are meshed in logspace.
 Eccentricity and scale factor are meshed linearly, between the bounding redshifts specified with `--z`.
 For a full list of options, along with detailed values, use the `--help` flag.
+
+Note that approximation of binaries with parameters outside table ranges will use the nearest binary configuration that is tabulated.
+Based on coupling strength, this can lead to large fractional errors.
+Always validate your tables, as described below.
 
 ## Validation
 
@@ -37,10 +41,11 @@ Tables can be validated by direct integration of randomly sampled binary paramet
 > $ python3 make_table.py --psize 14 --validate 100000 sample_table_k3.p
 
 This will write out a CSV to `sample_table_k3.p_validations.dat` and then show overall performances.
+The data in this file should be suitable for estimating systematic errors from the use of the table in MC inference.
+
 Fractional error in merger scale factor will be displayed as a histogram.
 Distributions for individual binary parameters of systems with fractional error performance worse than 1% will be saved
 to `detailed_errors.pdf`.
-
 For cases that show large fractional errors, you can add the `--bad` flag to a validation run and get a linear scale around +/- 10% fractional error, and logarithmic otherwise.
 
 ## Caveats and Todo
