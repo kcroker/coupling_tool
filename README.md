@@ -34,7 +34,7 @@ Fractional error in merger scale factor will be displayed as a histogram.
 Distributions for individual binary parameters of systems with fractional error performance worse than 1% will be saved
 to `detailed_errors.pdf`.
 
-For cases that show large fractional errors, you can add the `--bad` flag to a validation run and get a linear scale around +/- 10% fractional error. 
+For cases that show large fractional errors, you can add the `--bad` flag to a validation run and get a linear scale around +/- 10% fractional error, and logarithmic otherwise.
 
 ## Caveats and Todo
 
