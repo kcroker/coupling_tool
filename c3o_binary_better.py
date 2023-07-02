@@ -198,9 +198,17 @@ def c3o_binary_a(a,
     # Unpack the current integrator state
     R, e = state
 
+    # KC 7/2/23
+    # We can't check for pathological conditions like ejection
+    # or unphysical negative semi-major axes or eccentricities
+    # with the usual event detection stuff.
+    #
+    # These conditions break the integrator, so we can't
+    # root find around here, it seems.
+    
     # If R or e is negative, the evaluation equtions will vomit
     # So just (force) bail at this timestep
-    if R <= 0 or e < 0 or (e - 1.) > 0:
+    if R <= 0 or e < 0 or (e - 1.) > 0 or R*(1-e) < periastron_cutoff:
         tmp = EarlyTermException()
         tmp.a = a
         tmp.state = state
@@ -229,7 +237,17 @@ def c3o_binary_a(a,
 
             # Eccentricity
             deda = -304./15 * e * (1 + 121./304 * e2) * G3_over_c5_ASTRON * shifted_mass_cubed * q_times_one_plus_q / (one_minus_e2**2.5 * R**4)*recipHa
-            
+
+            # KC 7/2/23
+            # Sanity check that these derivatives have not become positive somehow
+            # (or if we somehow NaNd out)
+            if dRda > 0 or deda > 0 or np.isnan(dRda) or np.isnan(deda):
+                tmp = EarlyTermException()
+                tmp.a = a
+                tmp.state = state
+                tmp.icvec = icvec
+                raise(tmp)
+
             # # This was missing a shift factor and may have been off by a power of c^2!
             #dLda = (-32./5 *
             #        sqrt_G7_over_c10_ASTRON *
@@ -326,6 +344,7 @@ def negsemi(a,
 
     return state[0]
 
+# Terminate if we stop being an ellipse
 def negecc(a,
            state,
            M_i3,
@@ -384,8 +403,8 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
             # tmp.y = np.array([[0],[R],[e]])
             # return tmp
 
-    # Fancy trouble detection
-    events = [negsemi, negecc, ejection, merger]
+    # Fancy detection
+    events = [merger]
     
     while True:
         with np.errstate(all='raise'):
@@ -438,17 +457,17 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
                     raise Exception("Full reporting not supported for early termination")
             
         if not full:
+
+            # KC 7/2/23
+            # This reporting depends on the order of the termination events
+            
             # Merged?
             if len(orbit.t_events[0]):
                 return orbit.t_events[0][0]
 
-            # "Ejected" gracefully?
-            if len(orbit.t_events[1]):
-                return orbit.t_events[1][0]
-
-            # Spiraled all the way in on this hop?
-            if len(orbit.t_events[2]):
-                return orbit.t_events[2][0]
+            # # "Ejected" gracefully?
+            #if len(orbit.t_events[0]):
+            #    return orbit.t_events[0][0]
             
             # Terminated but missed the merger?
             return orbit.t[-1]
