@@ -83,8 +83,11 @@ def H(a):
     return (OmegaM/a**3 + OmegaL)**0.5
 
 def lookback_integrand(a):
-    # Naively shift this to conformal time...
-    return 1./(a*a*H(a))
+    # # Naively shift this to conformal time...
+    # return 1./(a*a*H(a))
+
+    # Use 'self' time...
+    return 1./(a*H(a))
 
 # Use quad() [ like astropy, hehe ] because cumtrapz() has been cancelled
 # (its cumulative error was 10%, or 1Gyr anyway, so it was dumb to use anyway)
@@ -311,22 +314,35 @@ def ejection(a,
     return 1. - state[1]
 
 # Terminate if we stop being an ellipse
-def notellipse(a,
-               state,
-               M_i3,
-               q_times_one_plus_q,
-               one_plus_q_over_q2,
-               k,
-               a_i,
-               q,
-               icvec):
+def negsemi(a,
+            state,
+            M_i3,
+            q_times_one_plus_q,
+            one_plus_q_over_q2,
+            k,
+            a_i,
+            q,
+            icvec):
 
-    return state[0] or state[1]
+    return state[0]
+
+def negecc(a,
+           state,
+           M_i3,
+           q_times_one_plus_q,
+           one_plus_q_over_q2,
+           k,
+           a_i,
+           q,
+           icvec):
+
+    return state[1]
 
 # Terminate in all these situations
 merger.terminal = True
 ejection.terminal = True
-notellipse.terminal = True
+negsemi.terminal = True
+negecc.terminal = True
 
 #
 # Wrapper on solve_ivp() that computes the initial conditions.
@@ -369,7 +385,7 @@ def characterize_inspiral(model, frame, method='LSODA', full=False):
             # return tmp
 
     # Fancy trouble detection
-    events = [merger, ejection, notellipse]
+    events = [negsemi, negecc, ejection, merger]
     
     while True:
         with np.errstate(all='raise'):

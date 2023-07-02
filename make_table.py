@@ -35,10 +35,10 @@ parser.add_argument("--k",
 parser.add_argument("--validate",
                     help="Number of random validation pulls to examine",
                     type=int,
-                    default=1000)
+                    default=10000)
 
 parser.add_argument("--bad",
-                    help="Display fractional error ranges in logspace outside of 10%",
+                    help="Display fractional error ranges in logspace outside of 10%%",
                     action='store_true')
 
 parser.add_argument("--psize",
